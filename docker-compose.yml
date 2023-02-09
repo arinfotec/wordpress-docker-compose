@@ -1,0 +1,56 @@
+version: '3.1'
+
+services: 
+
+  wordpressdb:
+    image: mariadb
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: wordpress 
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+#    networks: 
+#     - wpnet
+    volumes: 
+      - /home/armendes/projetos/wp/sql_data:/var/lib/mysql 
+
+
+  wordpress:
+    depends_on:
+     - wordpressdb
+    image: wordpress
+    restart: always
+    #links: 
+    # - wordpressdb:mysql
+    environment: 
+        WORDPRESS_DB_HOST: wordpressdb:3306
+        WORDPRESS_DB_USER: wordpress
+        WORDPRESS_DB_PASSWORD: wordpress
+        #WORDPRESS_DB_NAME: wordpress
+      
+#    networks: 
+#     - wpnet
+    ports: 
+     - "80:80"
+    volumes: 
+     - /home/armendes/projetos/wp/wordpress:/var/www/html
+  
+  myadmin:
+    depends_on: 
+     - wordpressdb
+    image: phpmyadmin
+    restart: always
+    #links: 
+    # - wordpressdb:mysql
+    environment: 
+      PMA_HOST: wordpressdb
+      WORDPRESS_DB_PASSWORD: wordpress
+#    networks: 
+#     - wpnet
+    ports: 
+     - "8000:80"
+
+#networks: 
+# wpnet:
+
